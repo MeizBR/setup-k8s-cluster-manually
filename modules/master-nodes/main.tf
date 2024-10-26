@@ -81,7 +81,7 @@ resource "aws_key_pair" "master-node-deployer-key" {
 
 resource "aws_instance" "master-node" {
     ami = data.aws_ami.latest_ubuntu_image.id
-    instance_type = var.instance_type
+    instance_type = "m5.large"
     subnet_id = var.subnet_id
     vpc_security_group_ids = [aws_security_group.master-node-sg.id]
     availability_zone = var.subnet_avail_zone

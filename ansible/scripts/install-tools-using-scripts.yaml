@@ -1,0 +1,14 @@
+---
+- name: Setup Kubernetes prerequisites on EC2 instances
+  hosts: aws_ec2
+  become: yes
+
+  tasks:
+    - name: Copy script to remote host
+      copy:
+        src: ./install-cluster-tools.sh
+        dest: /home/ubuntu/install-cluster-tools.sh
+        mode: '0755'
+
+    - name: Execute the script
+      shell: ./install-cluster-tools.sh

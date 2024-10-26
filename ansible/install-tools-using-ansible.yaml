@@ -37,14 +37,6 @@
             create: yes
             marker: "# {mark} ANSIBLE MANAGED MODULES"
 
-        # - name: Set sysctl parameters
-        #   ansible.posix.sysctl:
-        #     name: net.bridge.bridge-nf-call-iptables
-        #     value: 1
-        #     sysctl_set: yes
-        #     sysctl_file: /etc/sysctl.conf
-        #   notify: reload sysctl
-
         - name: Set sysctl parameters
           ansible.builtin.command:
             cmd: sysctl --system
@@ -73,7 +65,6 @@
           ansible.builtin.apt:
             update_cache: yes
             force_apt_get: yes
-            cache_valid_time: 3600
 
         - name: Install containerd
           ansible.builtin.apt:
@@ -117,19 +108,14 @@
           ansible.builtin.apt:
             update_cache: yes
             force_apt_get: yes
-            cache_valid_time: 3600
 
-        - name: Install apt-transport-https
+        - name: Install apt-transport-https and other dependencies
           ansible.builtin.apt:
-            name: apt-transport-https
-
-        - name: Install ca-certificates
-          ansible.builtin.apt:
-            name: ca-certificates
-
-        - name: Install curl
-          ansible.builtin.apt:
-            name: curl
+            name: 
+              - apt-transport-https
+              - ca-certificates
+              - curl
+            state: present
 
         - name: Add Kubernetes Repository GPG Key
           ansible.builtin.shell: |
@@ -148,17 +134,13 @@
             update_cache: yes
             force_apt_get: yes
 
-        - name: Install kubelet
+        - name: Install Kubernetes tools
           ansible.builtin.apt:
-            name: kubelet
-
-        - name: Install kubeadm
-          ansible.builtin.apt:
-            name: kubeadm
-
-        - name: Install kubectl
-          ansible.builtin.apt:
-            name: kubectl
+            name:
+              - kubelet
+              - kubeadm
+              - kubectl
+            state: present
 
         - name: Hold Kubernetes packages at current version
           ansible.builtin.command:
@@ -167,4 +149,4 @@
     - name: Enable kubelet Service
       ansible.builtin.systemd:
         name: kubelet
-        enabled: yes
+        enabled: true
